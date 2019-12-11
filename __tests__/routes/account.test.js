@@ -24,6 +24,16 @@ test('Deve inserir uma conta com sucesso', () => {
     });
 });
 
+test('Não Deve inserir uma conta sem Nome', () => {
+  return request(app)
+    .post(MAIN_ROUTE)
+    .send({ user_id: user.id })
+    .then(result => {
+      expect(result.status).toBe(400);
+      expect(result.body.error).toBe('Nome obrigatório');
+    });
+});
+
 test('Deve listar todas as contas', () => {
   return app
     .db('accounts')
@@ -44,5 +54,30 @@ test('Deve retornar uma conta por ID', () => {
       expect(res.status).toBe(200);
       expect(res.body.name).toBe('Acc by id');
       expect(res.body.user_id).toBe(user.id);
+    });
+});
+
+test('Deve alterar uma conta', () => {
+  return app
+    .db('accounts')
+    .insert({ name: 'Acc to update', user_id: user.id }, ['id'])
+    .then(acc =>
+      request(app)
+        .put(`${MAIN_ROUTE}/${acc[0].id}`)
+        .send({ name: 'Acc updated' })
+    )
+    .then(res => {
+      expect(res.status).toBe(200);
+      expect(res.body.name).toBe('Acc updated');
+    });
+});
+
+test('Deve remover uma conta', () => {
+  return app
+    .db('accounts')
+    .insert({ name: 'Acc delete', user_id: user.id }, ['id'])
+    .then(acc => request(app).delete(`${MAIN_ROUTE}/${acc[0].id}`))
+    .then(res => {
+      expect(res.status).toBe(204);
     });
 });
