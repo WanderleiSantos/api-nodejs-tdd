@@ -9,12 +9,12 @@ module.exports = app => {
     return res.status(200).json(account);
   };
 
-  const create = async (req, res) => {
+  const create = async (req, res, next) => {
     try {
       const result = await app.services.account.save(req.body);
       return res.status(201).json(result[0]);
     } catch (err) {
-      return res.status(400).json({ error: err.message });
+      return next(err);
     }
   };
 
