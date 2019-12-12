@@ -1,11 +1,21 @@
+const bcrypt = require('bcrypt-nodejs');
 const ValidationError = require('../errors/ValidationError');
 
 module.exports = app => {
-  const findAll = (filter = {}) => {
+  const findAll = () => {
+    return app.db('users').select(['id', 'name', 'mail']);
+  };
+
+  const findOne = (filter = {}) => {
     return app
       .db('users')
       .where(filter)
-      .select();
+      .first();
+  };
+
+  const getPassHash = password => {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(password, salt);
   };
 
   const save = async user => {
@@ -15,12 +25,13 @@ module.exports = app => {
 
     if (!user.password) throw new ValidationError('Senha obrigatorio');
 
-    const userDb = await findAll({ mail: user.mail });
-    if (userDb && userDb.length > 0)
-      throw new ValidationError('Email já cadastrado');
+    const userDb = await findOne({ mail: user.mail });
+    if (userDb) throw new ValidationError('Email já cadastrado');
 
-    return app.db('users').insert(user, '*');
+    const newUser = { ...user };
+    newUser.password = getPassHash(user.password);
+    return app.db('users').insert(newUser, ['id', 'name', 'mail']);
   };
 
-  return { findAll, save };
+  return { findAll, save, findOne };
 };

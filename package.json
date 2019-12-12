@@ -24,9 +24,11 @@
     "supertest": "3.3.0"
   },
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "1.18.3",
     "consign": "0.1.6",
     "express": "4.16.4",
+    "jwt-simple": "0.5.5",
     "knex": "0.15.2",
     "pg": "7.14.0"
   }
