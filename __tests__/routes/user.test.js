@@ -1,12 +1,27 @@
 const request = require('supertest');
-
+const jwt = require('jwt-simple');
 const app = require('../../src/app');
 
 const mail = `${Date.now()}@gmail.com`;
+const secret = '45dsa546d5as';
+
+let user;
+
+beforeAll(async () => {
+  const res = await app.services.user.save({
+    name: 'wanderlei',
+    mail: `${Date.now()}@gmail.com`,
+    password: '123456',
+  });
+
+  user = { ...res[0] };
+  user.token = jwt.encode(user, secret);
+});
 
 test('Deve listar todos os usuários', () => {
   return request(app)
     .get('/users')
+    .set('authorization', `bearer ${user.token}`)
     .then(res => {
       expect(res.status).toBe(200);
     });
@@ -15,6 +30,7 @@ test('Deve listar todos os usuários', () => {
 test('Deve inserir um usuário', () => {
   return request(app)
     .post('/users')
+    .set('authorization', `bearer ${user.token}`)
     .send({
       name: 'Wanderlei',
       mail,
@@ -30,6 +46,7 @@ test('Deve inserir um usuário', () => {
 test('Deve armazenar a senha criptografada', async () => {
   const res = await request(app)
     .post('/users')
+    .set('authorization', `bearer ${user.token}`)
     .send({
       name: 'Teste',
       mail: `${Date.now()}@gmail.com`,
@@ -46,6 +63,7 @@ test('Deve armazenar a senha criptografada', async () => {
 test('Não deve inserir usuário sem Nome', () => {
   return request(app)
     .post('/users')
+    .set('authorization', `bearer ${user.token}`)
     .send({
       mail,
       password: '123456',
@@ -58,6 +76,7 @@ test('Não deve inserir usuário sem Nome', () => {
 test('Não deve inserir usuário sem email', async () => {
   const result = await request(app)
     .post('/users')
+    .set('authorization', `bearer ${user.token}`)
     .send({ name: 'Wanderlei', password: '123456' });
 
   expect(result.status).toBe(400);
@@ -78,6 +97,7 @@ test('Não deve inserir usuário sem email', async () => {
 test('Não deve inserir usuário com email cadastrado', () => {
   return request(app)
     .post('/users')
+    .set('authorization', `bearer ${user.token}`)
     .send({
       name: 'Wanderlei',
       mail,
