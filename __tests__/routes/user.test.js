@@ -20,7 +20,7 @@ beforeAll(async () => {
 
 test('Deve listar todos os usuários', () => {
   return request(app)
-    .get('/users')
+    .get('/v1/users')
     .set('authorization', `bearer ${user.token}`)
     .then(res => {
       expect(res.status).toBe(200);
@@ -29,7 +29,7 @@ test('Deve listar todos os usuários', () => {
 
 test('Deve inserir um usuário', () => {
   return request(app)
-    .post('/users')
+    .post('/v1/users')
     .set('authorization', `bearer ${user.token}`)
     .send({
       name: 'Wanderlei',
@@ -45,7 +45,7 @@ test('Deve inserir um usuário', () => {
 
 test('Deve armazenar a senha criptografada', async () => {
   const res = await request(app)
-    .post('/users')
+    .post('/v1/users')
     .set('authorization', `bearer ${user.token}`)
     .send({
       name: 'Teste',
@@ -62,7 +62,7 @@ test('Deve armazenar a senha criptografada', async () => {
 
 test('Não deve inserir usuário sem Nome', () => {
   return request(app)
-    .post('/users')
+    .post('/v1/users')
     .set('authorization', `bearer ${user.token}`)
     .send({
       mail,
@@ -75,7 +75,7 @@ test('Não deve inserir usuário sem Nome', () => {
 
 test('Não deve inserir usuário sem email', async () => {
   const result = await request(app)
-    .post('/users')
+    .post('/v1/users')
     .set('authorization', `bearer ${user.token}`)
     .send({ name: 'Wanderlei', password: '123456' });
 
@@ -96,7 +96,7 @@ test('Não deve inserir usuário sem email', async () => {
 
 test('Não deve inserir usuário com email cadastrado', () => {
   return request(app)
-    .post('/users')
+    .post('/v1/users')
     .set('authorization', `bearer ${user.token}`)
     .send({
       name: 'Wanderlei',
