@@ -1,8 +1,11 @@
 const ValidationError = require('../errors/ValidationError');
 
 module.exports = app => {
-  const findAll = () => {
-    return app.db('accounts').select();
+  const findAll = user_id => {
+    return app
+      .db('accounts')
+      .select()
+      .where({ user_id });
   };
 
   const find = (filter = {}) => {
@@ -14,6 +17,9 @@ module.exports = app => {
 
   const save = async account => {
     if (!account.name) throw new ValidationError('Nome obrigatório');
+
+    const accDb = await find({ name: account.name, user_id: account.user_id });
+    if (accDb) throw new ValidationError('Já existe');
 
     return app.db('accounts').insert(account, '*');
   };
