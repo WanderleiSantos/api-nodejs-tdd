@@ -5,13 +5,13 @@ test('Deve criar usuário via signup', () => {
   return request(app)
     .post('/auth/signup')
     .send({
-      name: 'Wanderlei',
+      name: 'Wanderlei 1234',
       mail: `${Date.now()}@gmail.com`,
       password: '123456',
     })
     .then(res => {
       expect(res.status).toBe(201);
-      expect(res.body.name).toBe('Wanderlei');
+      expect(res.body.name).toBe('Wanderlei 1234');
       expect(res.body).not.toHaveProperty('password');
     });
 });
