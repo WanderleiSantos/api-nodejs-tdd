@@ -31,7 +31,10 @@ module.exports = app => {
       .update(account, '*');
   };
 
-  const remove = id => {
+  const remove = async id => {
+    const transaction = await app.services.transactions.findOne({ acc_id: id });
+
+    if (transaction) throw new ValidationError('Possui transações');
     return app
       .db('accounts')
       .where({ id })

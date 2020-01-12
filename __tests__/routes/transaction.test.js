@@ -51,14 +51,14 @@ test('Deve retornar apenas as transações do usuário', () => {
       {
         description: 'T1',
         date: new Date(),
-        amount: 100,
+        ammount: 100,
         type: 'I',
         acc_id: accUser.id,
       },
       {
         description: 'T2',
         date: new Date(),
-        amount: 540,
+        ammount: 540,
         type: 'I',
         acc_id: accUser2.id,
       },
@@ -82,7 +82,7 @@ test('Deve inserir uma transação com sucesso', () => {
     .send({
       description: 'T1 1233',
       date: new Date(),
-      amount: 100,
+      ammount: 100,
       type: 'I',
       acc_id: accUser.id,
     })
@@ -99,14 +99,14 @@ test('Transações de entrada devem ser positivas', () => {
     .send({
       description: 'New T',
       date: new Date(),
-      amount: -100,
+      ammount: -100,
       type: 'I',
       acc_id: accUser.id,
     })
     .then(res => {
       expect(res.status).toBe(201);
       expect(res.body.acc_id).toBe(accUser.id);
-      expect(res.body.amount).toBe('100.00');
+      expect(res.body.ammount).toBe('100.00');
     });
 });
 
@@ -117,14 +117,14 @@ test('Transações de saida devem ser negativas', () => {
     .send({
       description: 'New T',
       date: new Date(),
-      amount: 100,
+      ammount: 100,
       type: 'O',
       acc_id: accUser.id,
     })
     .then(res => {
       expect(res.status).toBe(201);
       expect(res.body.acc_id).toBe(accUser.id);
-      expect(res.body.amount).toBe('-100.00');
+      expect(res.body.ammount).toBe('-100.00');
     });
 });
 
@@ -135,7 +135,7 @@ describe('Ao tentar inserir uma transação inválida', () => {
     validTransaction = {
       description: 'New T',
       date: new Date(),
-      amount: 100,
+      ammount: 100,
       type: 'I',
       acc_id: accUser.id,
     };
@@ -162,7 +162,7 @@ describe('Ao tentar inserir uma transação inválida', () => {
       .send({
         description: 'New T',
         date: new Date(),
-        amount: 100,
+        ammount: 100,
         type: 'I',
         acc_id: accUser.id,
         ...newData,
@@ -176,7 +176,7 @@ describe('Ao tentar inserir uma transação inválida', () => {
   test('Não deve inserir sem descrição', () =>
     testTemplate({ description: null }, 'Descrição é um atributo obrigatório'));
   test('Não deve inserir sem valor', () =>
-    testTemplate({ amount: null }, 'Valor é um atributo obrigatório'));
+    testTemplate({ ammount: null }, 'Valor é um atributo obrigatório'));
   test('Não deve inserir uma transação sem data', () =>
     testTemplate({ date: null }, 'Data é um atributo obrigatório'));
   test('Não deve inserir uma transação sem conta', () =>
@@ -194,7 +194,7 @@ test('Deve retornar uma transação por ID', () => {
       {
         description: 'T1 456',
         date: new Date(),
-        amount: 100,
+        ammount: 100,
         type: 'I',
         acc_id: accUser.id,
       },
@@ -219,7 +219,7 @@ test('Deve alterar uma transação', () => {
       {
         description: 'T UPD',
         date: new Date(),
-        amount: 100,
+        ammount: 100,
         type: 'I',
         acc_id: accUser.id,
       },
@@ -244,7 +244,7 @@ test('Deve remover uma transação', () => {
       {
         description: 'T RMV',
         date: new Date(),
-        amount: 100,
+        ammount: 100,
         type: 'I',
         acc_id: accUser.id,
       },
@@ -267,7 +267,7 @@ test('Não Deve remover uma transação de outro usuário', () => {
       {
         description: 'T RMV O',
         date: new Date(),
-        amount: 100,
+        ammount: 100,
         type: 'I',
         acc_id: accUser2.id,
       },
@@ -280,6 +280,30 @@ test('Não Deve remover uma transação de outro usuário', () => {
         .then(result => {
           expect(result.status).toBe(403);
           expect(result.body.error).toBe('Pertence a outro usuário');
+        })
+    );
+});
+
+test('Não Deve remover uma conta com transação', () => {
+  return app
+    .db('transactions')
+    .insert(
+      {
+        description: 'T RMV6',
+        date: new Date(),
+        ammount: 100,
+        type: 'I',
+        acc_id: accUser.id,
+      },
+      ['id']
+    )
+    .then(() =>
+      request(app)
+        .delete(`/v1/accounts/${accUser.id}`)
+        .set('authorization', `bearer ${user.token}`)
+        .then(result => {
+          expect(result.status).toBe(400);
+          expect(result.body.error).toBe('Possui transações');
         })
     );
 });

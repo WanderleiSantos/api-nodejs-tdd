@@ -20,7 +20,7 @@ module.exports = app => {
   const save = transaction => {
     if (!transaction.description)
       throw new ValidationError('Descrição é um atributo obrigatório');
-    if (!transaction.amount)
+    if (!transaction.ammount)
       throw new ValidationError('Valor é um atributo obrigatório');
     if (!transaction.date)
       throw new ValidationError('Data é um atributo obrigatório');
@@ -33,10 +33,10 @@ module.exports = app => {
 
     const newTransaction = { ...transaction };
     if (
-      (transaction.type === 'I' && transaction.amount < 0) ||
-      (transaction.type === 'O' && transaction.amount > 0)
+      (transaction.type === 'I' && transaction.ammount < 0) ||
+      (transaction.type === 'O' && transaction.ammount > 0)
     ) {
-      newTransaction.amount *= -1;
+      newTransaction.ammount *= -1;
     }
     return app.db('transactions').insert(newTransaction, '*');
   };

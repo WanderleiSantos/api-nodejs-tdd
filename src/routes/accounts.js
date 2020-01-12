@@ -41,15 +41,18 @@ module.exports = app => {
     }
   });
 
-  router.put('/:id', async (req, res) => {
-    const result = await app.services.account.update(req.params.id, req.body);
-
-    return res.status(200).json(result[0]);
+  router.put('/:id', (req, res, next) => {
+    app.services.account
+      .update(req.params.id, req.body)
+      .then(result => res.status(200).json(result[0]))
+      .catch(err => next(err));
   });
 
-  router.delete('/:id', async (req, res) => {
-    await app.services.account.remove(req.params.id);
-    return res.status(204).send();
+  router.delete('/:id', (req, res, next) => {
+    app.services.account
+      .remove(req.params.id)
+      .then(() => res.status(204).send())
+      .catch(err => next(err));
   });
 
   return router;
