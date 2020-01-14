@@ -109,7 +109,11 @@ test('Deve remover uma conta', () => {
     });
 });
 
-test('Deve listar apenas as contas do usuário', () => {
+test('Deve listar apenas as contas do usuário', async () => {
+  await app.db('transactions').del();
+  await app.db('transfers').del();
+  await app.db('accounts').del();
+  // await app.db('users').del();
   return app
     .db('accounts')
     .insert([
