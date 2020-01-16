@@ -3,7 +3,7 @@
 
 # API NODE JEST
 
-API do sistema de ponto durante o curso de Java e Spring Boot.
+API Rest em NodeJS aplicando testes (TDD)
 
 # Detalhes da API
 
