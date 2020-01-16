@@ -7,20 +7,22 @@
     "start": "node src/server.js",
     "test": "jest",
     "lint": "eslint src/** test/** --fix",
-    "secure-mode": "jest --watch"
+    "secure-mode": "jest --watch",
+    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "babel-eslint": "^10.0.3",
+    "coveralls": "^3.0.9",
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.1",
-    "prettier": "^1.18.2",
     "jest": "23.6.0",
+    "prettier": "^1.18.2",
     "supertest": "3.3.0"
   },
   "dependencies": {
